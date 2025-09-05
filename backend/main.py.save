@@ -1,0 +1,39 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from typing import List, Dict
+
+# Create FastAPI app
+app = FastAPI()
+# Enable CORS so frontend can access backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/predict")
+def predict(hour: int):
+    """
+    Simple endpoint to predict energy consumption for a given hour.
+    Example: GET /predict?hour=10
+    """
+    return {"consumption": hour * 5 + 4}
+
+@app.get("/predict_all")
+def predict_all():
+    """
+    Returns predictions for all 24 hours.
+    Example: GET /predict_all
+    """
+    results: List[Dict] = []
+    for hour in range(24):
+        prediction = hour * 5 + 4
+        results.append({"hour": hour, "consumption": prediction})
+    return results
